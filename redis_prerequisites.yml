@@ -1,0 +1,7 @@
+---
+- name: Install Redis 6.2.6 packages
+  yum:
+    name:
+    - /root/ansible-redis/redis-6.2.6-1.el7.remi.x86_64.rpm
+    state: present
+    

@@ -1,0 +1,27 @@
+---
+- hosts: redis_hosts
+  remote_user: root
+  become: True
+  tasks:
+  - name: Execute prerequisites on all hosts
+    import_tasks: redis_prerequisites.yml
+    when: inventory_hostname in groups['redis_hosts']
+  - name: Configure master node
+    import_tasks: redis_conf_master.yml
+    vars:
+      standby_status: "{{ standby_status }}"
+    when: inventory_hostname in groups['redis_master']
+    become_user: root
+  - name: Configure slave nodes
+    import_tasks: redis_conf_slave.yml
+    when: inventory_hostname in groups['redis_slave']
+    become_user: root
+    vars:
+      master_host: "{{ groups.redis_master[0] }}"
+  - name: Configure sentinel nodes
+    import_tasks: redis_conf_sentinel.yml
+    when: inventory_hostname in groups['redis_sentinel']
+    become_user: root
+    vars:
+      master_host: "{{ groups.redis_master[0] }}"      
+      

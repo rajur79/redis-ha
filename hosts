@@ -1,0 +1,7 @@
+[redis_hosts]
+
+[redis_master]
+
+[redis_slave]
+
+[redis_sentinel]

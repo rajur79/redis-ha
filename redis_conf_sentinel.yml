@@ -1,0 +1,50 @@
+---
+- name: Comment out Redis-sentinel monitor
+  replace:
+    dest: /etc/redis-sentinel.conf
+    regexp: '^sentinel monitor mymaster'
+    replace: '#sentinel monitor mymaster'
+
+- name: Configure Redis-sentinel monitor
+  lineinfile:
+    path: /etc/redis-sentinel.conf
+    line: sentinel monitor redis-cluster {{ master_host }} 6379 2
+
+- name: Comment out Redis-sentinel down-after-milliseconds
+  replace:
+    dest: /etc/redis-sentinel.conf
+    regexp: '^sentinel down-after-milliseconds mymaster'
+    replace: '#sentinel down-after-milliseconds mymaster'
+
+- name: Configure Redis-sentinel down-after-milliseconds
+  lineinfile:
+    path: /etc/redis-sentinel.conf
+    line: sentinel down-after-milliseconds redis-cluster 5000
+
+- name: Comment out Redis-sentinel parallel-syncs
+  replace:
+    dest: /etc/redis-sentinel.conf
+    regexp: '^sentinel parallel-syncs mymaster'
+    replace: '#sentinel parallel-syncs mymaster'
+
+- name: Configure Redis-sentinel parallel-syncs
+  lineinfile:
+    path: /etc/redis-sentinel.conf
+    line: sentinel parallel-syncs redis-cluster 1
+
+- name: Comment out Redis-sentinel failover-timeout
+  replace:
+    dest: /etc/redis-sentinel.conf
+    regexp: '^sentinel failover-timeout mymaster'
+    replace: '#sentinel failover-timeout mymaster'
+
+- name: Configure Redis-sentinel failover-timeout
+  lineinfile:
+    path: /etc/redis-sentinel.conf
+    line: sentinel failover-timeout redis-cluster 10000
+    
+- name: Restart Redis Sentinel
+  systemd:
+    state: restarted
+    name: redis-sentinel
+  become_user: root
